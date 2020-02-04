@@ -1,6 +1,6 @@
 # `groovyfmt`
 
-`groovyfmt` is a tool to automatically format your Groovy code.
+`groovyfmt` is a tool to automatically format your [Groovy](http://groovy-lang.org/) and [Jenkins pipeline](https://jenkins.io/doc/book/pipeline/) source code.
 
 ## Status
 
