@@ -1015,16 +1015,20 @@ public class SourcePrinter extends VisitorAdapter {
     }
 
     protected void printUpdatingTabLevel(GroovySourceAST t,int visit,String opening, String subsequent, String closing) {
-        if (visit == OPENING_VISIT && opening != null) {
-            print(t,visit,opening);
+        if (visit == OPENING_VISIT) {
+            if (opening != null) {
+                print(t,visit,opening);
+            }
             tabLevel++;
         }
         if (visit == SUBSEQUENT_VISIT && subsequent != null) {
             print(t,visit,subsequent);
         }
-        if (visit == CLOSING_VISIT && closing != null) {
+        if (visit == CLOSING_VISIT) {
             tabLevel--;
-            print(t,visit,closing);
+            if (closing != null) {
+                print(t,visit,closing);
+            }
         }
     }
 
