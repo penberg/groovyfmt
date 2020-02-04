@@ -1059,7 +1059,11 @@ public class SourcePrinter extends VisitorAdapter {
         if (lastLinePrinted != currentLine) {
             if (newLines) {
                 if (!(visit == OPENING_VISIT && t.getType() == GroovyTokenTypes.SLIST)) {
+                    int newlineCount = 0;
                     for (int i=lastLinePrinted;i<currentLine;i++) {
+                        // FIXME: We need this limiter to avoid lots of consecutive newlines.
+                        // Investigate why that happens and fix the bug.
+                        if (++newlineCount > 2) break;
                         out.println();
                     }
                     if (lastLinePrinted > currentLine) {
