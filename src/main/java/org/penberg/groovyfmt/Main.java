@@ -57,7 +57,6 @@ public class Main {
     parser.setSourceBuffer(sourceBuffer);
     parser.compilationUnit();
     AST ast = parser.getAST();
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     SourcePrinter printer = new SourcePrinter(System.out, tokenNames, true);
     if (indent != null) {
       if (indent.equals("tab")) {
