@@ -1,0 +1,3 @@
+def s = """
+hello, world!
+"""
