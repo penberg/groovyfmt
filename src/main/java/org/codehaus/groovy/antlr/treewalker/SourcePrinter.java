@@ -30,6 +30,8 @@ import java.util.Stack;
  * to the supplied PrintStream.
  */
 public class SourcePrinter extends VisitorAdapter {
+    public static final String DEFAULT_INDENT = "    ";
+
     private final String[] tokenNames;
     private int tabLevel;
     private int lastLinePrinted;
@@ -38,6 +40,7 @@ public class SourcePrinter extends VisitorAdapter {
     private String className;
     private final Stack stack;
     private int stringConstructorCounter;
+    private String indent = DEFAULT_INDENT;
 
     /**
      * A visitor that prints groovy source code for each node visited.
@@ -61,6 +64,10 @@ public class SourcePrinter extends VisitorAdapter {
         this.out = out;
         this.newLines = newLines;
         this.stack = new Stack();
+    }
+
+    public void setIndent(String indent) {
+        this.indent = indent;
     }
 
     public void visitAbstract(GroovySourceAST t, int visit) {
@@ -1072,7 +1079,7 @@ public class SourcePrinter extends VisitorAdapter {
                     }
                     if (visit == OPENING_VISIT || visit == CLOSING_VISIT) {
                         for (int i=0;i<tabLevel;i++) {
-                            out.print("    ");
+                            out.print(indent);
                         }
                     }
                 }

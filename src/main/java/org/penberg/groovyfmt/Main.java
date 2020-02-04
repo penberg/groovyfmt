@@ -4,6 +4,7 @@ import antlr.collections.AST;
 import io.airlift.airline.Arguments;
 import io.airlift.airline.Command;
 import io.airlift.airline.HelpOption;
+import io.airlift.airline.Option;
 import io.airlift.airline.SingleCommand;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
@@ -18,7 +19,6 @@ import org.codehaus.groovy.antlr.parser.GroovyLexer;
 import org.codehaus.groovy.antlr.parser.GroovyRecognizer;
 import org.codehaus.groovy.antlr.treewalker.SourceCodeTraversal;
 import org.codehaus.groovy.antlr.treewalker.SourcePrinter;
-import org.codehaus.groovy.antlr.treewalker.Visitor;
 
 @Command(name = "grooyfmt", description = "A tool to format Groovy/Jenkinsfile source code")
 public class Main {
@@ -27,6 +27,9 @@ public class Main {
 
   @Arguments(description = "Files to format")
   public List<String> files = new LinkedList();
+
+  @Option(name = {"-i", "--indent"}, description = "Indentation width in spaces or 'tab' for tabs")
+  public String indent;
 
   public static void main(String[] args) throws Exception {
     Main app = SingleCommand.singleCommand(Main.class).parse(args);
@@ -55,8 +58,18 @@ public class Main {
     parser.compilationUnit();
     AST ast = parser.getAST();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    Visitor visitor = new SourcePrinter(System.out, tokenNames, true);
-    AntlrASTProcessor traverser = new SourceCodeTraversal(visitor);
+    SourcePrinter printer = new SourcePrinter(System.out, tokenNames, true);
+    if (indent != null) {
+      if (indent.equals("tab")) {
+        printer.setIndent("\t");
+      } else {
+	int count = Integer.parseInt(indent);
+	// This is not as pretty as String.repeat(), but it's what's available everywhere pre-Java 11.
+	String indent = new String(new char[count]).replace("\0", " ");
+        printer.setIndent(indent);
+      }
+    }
+    AntlrASTProcessor traverser = new SourceCodeTraversal(printer);
     traverser.process(ast);
   }
 }
