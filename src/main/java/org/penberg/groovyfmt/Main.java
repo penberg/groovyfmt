@@ -47,24 +47,33 @@ public class Main {
 
   private void format(String file) throws Exception {
     System.out.println("Formatting " + file + " ...");
+    GroovyRecognizer parser = parse(file);
+    print(parser);
+  }
+
+  private GroovyRecognizer parse(String file) throws Exception {
     SourceBuffer sourceBuffer = new SourceBuffer();
     FileReader reader = new FileReader(file);
     UnicodeEscapingReader unicodeReader = new UnicodeEscapingReader(reader, sourceBuffer);
     GroovyLexer lexer = new GroovyLexer(unicodeReader);
     unicodeReader.setLexer(lexer);
     GroovyRecognizer parser = GroovyRecognizer.make(lexer);
-    String[] tokenNames = parser.getTokenNames();
     parser.setSourceBuffer(sourceBuffer);
     parser.compilationUnit();
+    return parser;
+  }
+
+  private void print(GroovyRecognizer parser) {
+    String[] tokenNames = parser.getTokenNames();
     AST ast = parser.getAST();
     SourcePrinter printer = new SourcePrinter(System.out, tokenNames, true);
     if (indent != null) {
       if (indent.equals("tab")) {
         printer.setIndent("\t");
       } else {
-	int count = Integer.parseInt(indent);
-	// This is not as pretty as String.repeat(), but it's what's available everywhere pre-Java 11.
-	String indent = new String(new char[count]).replace("\0", " ");
+        int count = Integer.parseInt(indent);
+        // This is not as pretty as String.repeat(), but it's what's available everywhere pre-Java 11.
+        String indent = new String(new char[count]).replace("\0", " ");
         printer.setIndent(indent);
       }
     }
