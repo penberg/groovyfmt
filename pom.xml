@@ -11,8 +11,33 @@
 
   <inceptionYear>2020</inceptionYear>
 
+  <dependencies>
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <version>2.7.7</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>antlr-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <sourceDirectory>${basedir}</sourceDirectory>
+          <grammars>src/main/antlr2/org/codehaus/groovy/antlr/groovy.g</grammars>
+       </configuration>
+       <executions>
+         <execution>
+         <goals>
+            <goal>generate</goal>
+         </goals>
+        </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
