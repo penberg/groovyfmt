@@ -1062,7 +1062,7 @@ public class SourcePrinter extends VisitorAdapter {
                         out.println();
                         lastLinePrinted = currentLine;
                     }
-                    if (visit == OPENING_VISIT || (visit == CLOSING_VISIT && lastLinePrinted > currentLine)) {
+                    if (visit == OPENING_VISIT || visit == CLOSING_VISIT) {
                         for (int i=0;i<tabLevel;i++) {
                             out.print("    ");
                         }
