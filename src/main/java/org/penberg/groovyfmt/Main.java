@@ -7,8 +7,13 @@ import io.airlift.airline.HelpOption;
 import io.airlift.airline.Option;
 import io.airlift.airline.SingleCommand;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 import java.util.List;
 import javax.inject.Inject;
@@ -46,9 +51,16 @@ public class Main {
   }
 
   private void format(String file) throws Exception {
+    File backup = new File(file + ".bak");
+    File tmp = File.createTempFile(file, ".tmp");
     System.out.println("Formatting " + file + " ...");
     GroovyRecognizer parser = parse(file);
-    print(parser);
+    PrintStream output = new PrintStream(new FileOutputStream(tmp));
+    print(parser, output);
+    File original = new File(file);
+    Files.move(original.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    original = new File(file);
+    Files.move(tmp.toPath(), original.toPath(), StandardCopyOption.REPLACE_EXISTING);
   }
 
   private GroovyRecognizer parse(String file) throws Exception {
@@ -63,10 +75,10 @@ public class Main {
     return parser;
   }
 
-  private void print(GroovyRecognizer parser) {
+  private void print(GroovyRecognizer parser, PrintStream output) {
     String[] tokenNames = parser.getTokenNames();
     AST ast = parser.getAST();
-    SourcePrinter printer = new SourcePrinter(System.out, tokenNames, true);
+    SourcePrinter printer = new SourcePrinter(output, tokenNames, true);
     if (indent != null) {
       if (indent.equals("tab")) {
         printer.setIndent("\t");
